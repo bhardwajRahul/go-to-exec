@@ -17,7 +17,7 @@ const keyAuthDefaultHTTPBasicUser = "gte"
 const keyAuthApiKeyQuery = "__gteApiKey"
 const keyArgsHeadersKey = "__gteHeaders"
 
-func MountRoutes(engine *gin.Engine, config *Config) {
+func MountRoutes(engine *gin.Engine, config *RouterConfig) {
 	storageCache := new(sync.Map)
 
 	for route, listenerConfig := range config.Listeners {

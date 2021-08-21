@@ -290,7 +290,7 @@ func loadGTE(t *testing.T, configPath string, listener net.Listener) *gin.Engine
 		}
 	}
 
-	var configs []*Config
+	var configs []*RouterConfig
 
 	{
 		config, err := LoadConfig(configPath)

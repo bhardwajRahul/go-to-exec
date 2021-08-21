@@ -17,8 +17,15 @@ import (
 
 // @formatter:off
 /// [config-docs]
-type Config struct {
-	// If true, enable all logging by default
+type GTEConfig struct {
+	// If provided, stores requests info in the provided database
+	DBConfig *DBConfig `mapstructure:"dbConfig"`
+
+	Router *RouterConfig `mapstructure:"router"`
+}
+
+type RouterConfig struct {
+	// If true, enable all logging on listeners by default
 	Debug bool `mapstructure:"debug"`
 
 	// HTTP port used by go-to-exec to listen for incoming requests, defaults to 7055
@@ -220,8 +227,8 @@ func init() {
 	spew.Config.DisableCapacities = true
 }
 
-func MustLoadConfigs(filenames ...string) map[int][]*Config {
-	var toMerge []*Config
+func MustLoadConfigs(filenames ...string) map[int][]*RouterConfig {
+	var toMerge []*RouterConfig
 
 	for _, filename := range filenames {
 		subConfig, err := LoadConfig(filename)
@@ -239,8 +246,8 @@ func MustLoadConfigs(filenames ...string) map[int][]*Config {
 	return configsByPort
 }
 
-func groupConfigsByPort(configs ...*Config) (map[int][]*Config, error) {
-	ret := make(map[int][]*Config)
+func groupConfigsByPort(configs ...*RouterConfig) (map[int][]*RouterConfig, error) {
+	ret := make(map[int][]*RouterConfig)
 
 	// We want to merge configs by port
 	for _, config := range configs {
@@ -250,10 +257,10 @@ func groupConfigsByPort(configs ...*Config) (map[int][]*Config, error) {
 	return ret, nil
 }
 
-func LoadConfig(filename string) (*Config, error) {
+func LoadConfig(filename string) (*RouterConfig, error) {
 	myViper := readConfigToViper(filename, "config")
 
-	config := new(Config)
+	config := new(RouterConfig)
 
 	if err := myViper.Unmarshal(config,
 		// Lets us decode custom configuration types
